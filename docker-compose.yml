@@ -12,15 +12,23 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
+
   keycloak:
     image: jboss/keycloak
     container_name: keycloak
     ports:
       - "8080:8080"
     environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=admin
-      - DB_VENDOR=h2
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - DB_VENDOR=mysql
+      - DB_ADDR=mysql-keycloak
+      - DB_PORT=3306
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_DATABASE=keycloak
+    depends_on:
+      - mysql-keycloak   
   rabbitmq:
     image: 'rabbitmq:3.13.0-management'
     hostname: rabbitmq
@@ -33,6 +41,7 @@ services:
     ports:
       - 15672:15672
       - 5672:5672
+
   mysql-task:
     container_name: task-mysql
     image: "mysql:latest"
@@ -45,3 +54,27 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ALLOW_EMPTY_PASSWORD: yes    
+
+  mysql-keycloak:
+    container_name: task-keycloak
+    image: "mysql:latest"
+    restart: always
+    hostname: localhost
+    ports:
+      - 3310:3306
+    environment:
+      MYSQL_DATABASE: 'keycloak'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql-keycloak  
+      MYSQL_ROOT_PASSWORD: password  
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql-keycloak
