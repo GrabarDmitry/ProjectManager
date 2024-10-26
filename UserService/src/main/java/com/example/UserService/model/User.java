@@ -9,17 +9,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
-@Entity
 @Data
-@Table(name = "\"USER_ENTITY\"")
+@Entity
+@Table(name = "USER_ENTITY")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "\"ID\"")
-    private Long ID;
+    @Column(name = "ID")
+    private String ID;
 
-    @Column(name = "\"USERNAME\"")
+    @Column(name = "USERNAME")
     private String USERNAME;
 
 }
