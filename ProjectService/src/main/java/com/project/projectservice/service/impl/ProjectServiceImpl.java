@@ -1,5 +1,6 @@
 package com.project.projectservice.service.impl;
 
+import com.project.projectservice.event.sourse.EventSender;
 import com.project.projectservice.exception.ResourceException;
 import com.project.projectservice.model.Project;
 import com.project.projectservice.model.enums.ProjectStatus;
@@ -11,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.StackWalker.Option;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -22,6 +21,7 @@ import java.util.Optional;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository projectRepo;
+    final EventSender eventSender;
 
     @Override
     public List<Project> getAll() {
@@ -41,6 +41,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public void deleteProject(Long id) {
+        eventSender.publishProjectDelete(id);
         projectRepo.deleteById(id);
     }
 

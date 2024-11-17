@@ -28,10 +28,10 @@ public class TaskServiceImpl implements TaskService{
     @Override
     public Task createTask(Task task) {
 
-        ResponseEntity entity =  projectClientService.isExistById(task.getProjectId());
+        boolean isExistProject =  projectClientService.isExistById(task.getProjectId());
         HttpStatusCode isExistUsers = userClientsService.isExistUsersById(task.getUsers());
 
-        if (entity != null && isExistUsers.value() == 200) {
+        if (isExistProject && isExistUsers.value() == 200) {
             return repository.save(task);
         }
 
