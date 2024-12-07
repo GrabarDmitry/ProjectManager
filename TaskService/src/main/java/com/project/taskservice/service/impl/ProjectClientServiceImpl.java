@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 import com.project.taskservice.exception.ResourceException;
 import com.project.taskservice.model.Project;
 import com.project.taskservice.repository.ProjectRepositoryRedis;
+import com.project.taskservice.service.ProjectCacheService;
 import com.project.taskservice.service.ProjectClientService;
 
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 public class ProjectClientServiceImpl implements ProjectClientService{
     
     private final RestTemplate restTemplate;
-    private final ProjectRepositoryRedis repositoryRedis;
+    private final ProjectCacheService cacheService;
 
     @Override
     public boolean isExistById(Long projectId) {
-        Project project = checkRedisCache(projectId);
+        Project project = cacheService.getById(projectId);
 
         if (project != null){
             log.info("Get projrct form cache, project id: {}", projectId);
@@ -40,7 +41,7 @@ public class ProjectClientServiceImpl implements ProjectClientService{
             Project projectRespone = response.getBody();
 
             if (projectRespone != null) {
-                cacheProjectObject(projectRespone);
+                cacheService.save(projectRespone);
                 log.info("Project was found by request to server, project id {}", projectId);
                 return true;
             }
@@ -54,23 +55,6 @@ public class ProjectClientServiceImpl implements ProjectClientService{
         }
 
         return false;
-    }
-
-	private Project checkRedisCache(Long id) {
-		try {
-			return repositoryRedis.findById(id).orElse(null);
-		}catch (Exception ex){
-            log.error("Error with check is exist project in chche", ex);
-			return null;
-		}
-	}
-	
-	private void cacheProjectObject(Project project) {
-        try {
-        	repositoryRedis.save(project);
-        }catch (Exception ex){
-            log.error("Error with save project in cache", ex);
-        }
     }
     
 }

@@ -26,6 +26,18 @@ public class ProjectDTOConverter {
         );
     }
 
+    public Project toEntityUpdate(Long id ,ProjectRequestDTO project){
+        return new Project(
+            id,
+            project.getTitle(),
+            project.getDescription(),
+            project.getManagerId(),
+            project.getDateStart(),
+            project.getDateEnd(),
+            project.getStatus()
+        );
+    }
+
     public ProjectResponseDTO toDTO(Project project){
         return new ProjectResponseDTO(
             project.getId(),

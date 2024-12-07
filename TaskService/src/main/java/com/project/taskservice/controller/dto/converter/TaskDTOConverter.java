@@ -24,6 +24,18 @@ public class TaskDTOConverter {
         );
     }
 
+    public Task toEntityUpdate(Long id ,TaskRequestDTO dto){
+        return new Task(
+            id,
+            dto.getTitle(),
+            dto.getDescription(),
+            dto.getProjectId(),
+            dto.getUsers(),
+            dto.getDateEnd(),
+            dto.getStatus()
+        );
+    }
+
     public TaskResponceDTO toDTO(Task task){
         return new TaskResponceDTO(
             task.getId(),

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/project")
@@ -31,20 +32,40 @@ public class ProjectController {
             HttpStatus.CREATED);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ProjectResponseDTO> getById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(
+            dtoConverter.toDTO(
+                projectService.getProjectById(id)
+                ),
+            HttpStatus.OK);
+    }
+
     @GetMapping
-    public List<Project> getAll(){
-        return projectService.getAll();
+    public ResponseEntity<List<ProjectResponseDTO>> getAll() {
+        return new ResponseEntity<>(
+            projectService.getAll()
+                        .stream()
+                        .map(dtoConverter::toDTO)
+                        .collect(Collectors.toList()),
+            HttpStatus.OK);
     }
 
-    @DeleteMapping("/{projectId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void deleteJob(@PathVariable("projectId") Long projectId){
-        projectService.deleteProject(projectId);
+    @PutMapping("/{id}")
+    public ResponseEntity<ProjectResponseDTO> updateProject(
+        @PathVariable("id") Long id, @RequestBody @Valid ProjectRequestDTO requestDTO) {
+        return new ResponseEntity<>(
+            dtoConverter.toDTO(
+                projectService.updateProject(
+                    dtoConverter.toEntityUpdate(id, requestDTO))),
+            HttpStatus.OK);
     }
 
-    @GetMapping("/{projectId}")
-    Project getProjectById(@PathVariable("projectId") Long projectId){
-        return projectService.getProjectById(projectId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProject(
+        @PathVariable("id") Long id) {
+            projectService.deleteProject(id);
+            return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
