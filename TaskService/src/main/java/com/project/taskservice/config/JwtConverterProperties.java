@@ -1,4 +1,5 @@
-package com.project.gatewayservice.config;
+package com.project.taskservice.config;
+
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

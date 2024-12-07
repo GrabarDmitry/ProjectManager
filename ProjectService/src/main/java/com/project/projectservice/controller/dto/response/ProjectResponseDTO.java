@@ -1,21 +1,18 @@
-package com.project.projectservice.model;
+package com.project.projectservice.controller.dto.response;
+
+import java.util.Date;
 
 import com.project.projectservice.model.enums.ProjectStatus;
-import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
-@Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Project {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProjectResponseDTO {
+    
     private Long id;
 
     private String title;
@@ -28,7 +25,6 @@ public class Project {
 
     private Date dateEnd;
 
-    @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
 }

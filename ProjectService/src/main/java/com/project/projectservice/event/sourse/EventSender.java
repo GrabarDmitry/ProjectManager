@@ -30,7 +30,7 @@ public class EventSender {
 
         log.info("message INFO : {}", message);
 
-        streamBridge.send("project-delete-output", MessageBuilder.withPayload(project).build());
+        streamBridge.send("project-delete-output", message);
     }
 
 }

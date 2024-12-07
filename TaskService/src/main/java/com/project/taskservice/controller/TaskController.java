@@ -2,15 +2,21 @@ package com.project.taskservice.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.taskservice.controller.dto.converter.TaskDTOConverter;
+import com.project.taskservice.controller.dto.request.TaskRequestDTO;
+import com.project.taskservice.controller.dto.response.TaskResponceDTO;
 import com.project.taskservice.model.Task;
 import com.project.taskservice.service.TaskService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -18,12 +24,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TaskController {
 
-
+    private final TaskDTOConverter converter;
     private final TaskService taskService;
 
     @PostMapping
-    public Task createTask(@RequestBody Task task){
-        return taskService.createTask(task);
+    public ResponseEntity<TaskResponceDTO>  createTask(@Valid @RequestBody TaskRequestDTO task){
+        return new ResponseEntity<>(
+            converter.toDTO(
+                taskService.createTask(converter.toEntityCreate(task))
+                ),
+            HttpStatus.CREATED);
     }
 
     @GetMapping

@@ -1,9 +1,15 @@
 package com.project.projectservice.controller;
 
+import com.project.projectservice.controller.converter.ProjectDTOConverter;
+import com.project.projectservice.controller.dto.request.ProjectRequestDTO;
+import com.project.projectservice.controller.dto.response.ProjectResponseDTO;
 import com.project.projectservice.model.Project;
 import com.project.projectservice.service.ProjectService;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,10 +20,15 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final ProjectDTOConverter dtoConverter;
 
     @PostMapping
-    public Project createProject(@RequestBody Project project){
-        return projectService.createProject(project);
+    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody ProjectRequestDTO project){
+        return new ResponseEntity<>(
+            dtoConverter.toDTO(
+                projectService.createProject(dtoConverter.toEntityCreate(project))
+                ),
+            HttpStatus.CREATED);
     }
 
     @GetMapping

@@ -31,4 +31,22 @@ public class CustomExceptionHandler {
         .body(new ExceptionInfo(HttpStatus.BAD_REQUEST, ex.getMessage()));
   }
 
+  @ExceptionHandler({
+    MethodArgumentNotValidException.class
+  })
+  public ResponseEntity<ExeptionInfoWithMap> validationExceptionHandle(MethodArgumentNotValidException ex) {
+    log.error("{}: {}", ex.getClass(), ex.getMessage());
+    
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult().getAllErrors().forEach((error) -> {
+        String fieldName = ((FieldError) error).getField();
+        String errorMessage = error.getDefaultMessage();
+        errors.put(fieldName, errorMessage);
+    });
+    
+    return ResponseEntity.badRequest()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(new ExeptionInfoWithMap(HttpStatus.BAD_REQUEST, errors));
+  }
+
 }

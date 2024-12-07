@@ -30,7 +30,7 @@ public class UserClientServiceImpl implements UserClientsService{
             String url = UriComponentsBuilder.fromHttpUrl("http://localhost:8056/api/v1/user/isExistUsers")
             .queryParam("userId", idList.toArray())
             .toUriString();
-            
+
             ResponseEntity<Void> response = restTemplate.getForEntity(url, Void.class);
 
             return response.getStatusCode();

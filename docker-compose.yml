@@ -95,5 +95,4 @@ services:
       ZK_HOSTS: zookeeper:2181
     depends_on:
       - zookeeper
-      - kafkaserver  
-      
+      - kafkaserver

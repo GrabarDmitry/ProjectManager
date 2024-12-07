@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Русский алфавит</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+.display {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 9em;
+    font-weight: bold;
+    background-color: #e3e3e3;
+    border-bottom: 2px solid #ccc;
+    text-align: center;
+}
+
+.alphabet {
+    flex: 2;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 5px;
+    padding: 10px;
+    background-color: #ffffff;
+    overflow-y: auto;
+}
+
+.alphabet button {
+    font-size: 10em;
+    padding: 2px;
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+ .button {
+    font-size: 5em;
+    background-color: #0078d7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+img {
+    max-height: 200px;
+}
+
+.alphabet button:hover {
+    background-color: #005fa3;
+}
+
+    </style>
+</head>
+<body>
+    <div style="display: flex;flex-direction: row;">
+        <div id="display" class="display" style="width: 65%;">
+            Нажмите на букву ниже
+        </div>
+        <div class="button" onclick="deleteButton()" style="width: 35%; vertical-align: center; background-color: #557b97b8;">
+                <img src="https://ecortbel.by/upload/iblock/368/36807f6be7555ec60bd5cbe051bf76e1.jpg" alt="Описание изображения" style="width: 100%; height: auto;" />
+        </div>
+    </div>
+    <div id="alphabet" class="alphabet">
+        <!-- Здесь буквы алфавита -->
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+
+<script>
+// Получаем элементы
+const display = document.getElementById('display');
+const alphabet = document.getElementById('alphabet');
+
+let resultText = '';
+
+// Генерация кнопок для букв алфавита
+const letters = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+letters.split('').forEach(letter => {
+    const button = document.createElement('button');
+    button.textContent = letter;
+
+    // Проверяем, является ли буква гласной
+    if ('АЕЁИОУЫЭЮЯ'.includes(letter)) {
+        button.style.backgroundColor = 'red'; // Красный фон для гласных
+    }
+
+    // Добавляем обработчик события для кнопки
+    button.addEventListener('click', () => {
+        resultText += letter; // Добавляем букву в текст
+        display.textContent = resultText; // Обновляем текст сверху
+    });
+
+    alphabet.appendChild(button); // Добавляем кнопку в алфавит
+});
+
+function deleteButton() {
+    resultText = resultText.slice(0, -1); // Удаляем последний символ из resultText
+    display.textContent = resultText; // Обновляем текст на экране
+}
+
+</script>
