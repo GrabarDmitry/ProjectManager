@@ -22,7 +22,7 @@ public class Project {
 
     private String description;
 
-    private Long managerId;
+    private String managerId;
 
     private Date dateStart;
 

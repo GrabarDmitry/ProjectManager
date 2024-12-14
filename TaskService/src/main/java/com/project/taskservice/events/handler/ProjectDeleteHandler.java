@@ -7,7 +7,6 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 
 import com.project.taskservice.events.model.ProjectEventModel;
-import com.project.taskservice.repository.ProjectRepositoryRedis;
 import com.project.taskservice.service.ProjectCacheService;
 
 import lombok.RequiredArgsConstructor;

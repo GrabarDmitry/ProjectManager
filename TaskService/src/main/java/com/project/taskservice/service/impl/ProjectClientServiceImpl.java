@@ -20,41 +20,36 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProjectClientServiceImpl implements ProjectClientService{
     
+    private final String PATH_TO_PROJECT_SERVICE_BY_ID = "http://localhost:8083/api/v1/project/";
     private final RestTemplate restTemplate;
     private final ProjectCacheService cacheService;
 
     @Override
-    public boolean isExistById(Long projectId) {
+    public Project geProjectById(Long projectId) {
         Project project = cacheService.getById(projectId);
 
         if (project != null){
             log.info("Get projrct form cache, project id: {}", projectId);
-            return true;
+            return project;
         }
 
         log.warn("Project with id {} not found in cache", projectId);
 
         try {
             ResponseEntity<Project> response = restTemplate.getForEntity(
-                    "http://localhost:8081/api/v1/project/" + projectId, Project.class);
+                PATH_TO_PROJECT_SERVICE_BY_ID + projectId, Project.class);
 
             Project projectRespone = response.getBody();
 
             if (projectRespone != null) {
                 cacheService.save(projectRespone);
                 log.info("Project was found by request to server, project id {}", projectId);
-                return true;
+                return projectRespone;
             }
-        } catch (HttpClientErrorException.BadRequest e) {
-            throw new ResourceException("You try to add task to project that doesn't exist: projectId " + projectId);
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new ResourceException("You try to add task to project that doesn't exist: projectId " + projectId);
-            }
-            throw e;
+            throw new ResourceException("You try to add task to project that doesn't exist: projectId " + projectId);
         }
-
-        return false;
+        return null;
     }
     
 }

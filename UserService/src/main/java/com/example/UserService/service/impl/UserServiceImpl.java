@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.UserService.exception.ResourceException;
 import com.example.UserService.model.User;
 import com.example.UserService.repository.UserRepository;
 import com.example.UserService.service.UserService;
@@ -26,17 +27,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAll() {
+        log.info("Service method called to find all Users");
         return userRepo.findAll();
     }
 
     @Override
     public User getByUserId(String userId){
-        return userRepo.findByStringId(userId);
+        log.info("Service method called to find User with id: {}", userId);
+        return userRepo.findByStringId(userId).orElseThrow(
+            () -> {
+                log.warn("User with Id: {} not found", userId);
+                throw new ResourceException("User with Id: " + userId + " not found");
+              });
     }
 
     @Override
-    public boolean areUsersExist(List<String> userId){
+    public List<User> listUserById(List<String> userId){
+        log.info("Service method called to find all Users by nedded id: {}", userId);
         List<User> users = userRepo.findByStringIds(userId);
-        return users.size() == userId.size();
+        return users;
     }
 }

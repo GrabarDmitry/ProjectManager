@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,22 @@ public class ProjectController {
     private final ProjectService projectService;
     private final ProjectDTOConverter dtoConverter;
 
+    @GetMapping
+    public ResponseEntity<List<ProjectResponseDTO>> getAll(
+        @RequestParam(name = "status", required = false) String status,
+        @RequestParam(name = "managerId", required = false) Long managerId,
+        @RequestParam(name = "dateEnd", required = false) Date dateEnd,
+        @RequestParam(name = "dateStart", required = false) Date dateStart,
+        @RequestParam(name = "title", required = false) String title
+    ) {
+        return new ResponseEntity<>(
+            projectService.getAllWithFilters(status, managerId, dateEnd, dateStart, title)
+                        .stream()
+                        .map(dtoConverter::toDTO)
+                        .collect(Collectors.toList()),
+            HttpStatus.OK);
+    }
+    
     @PostMapping
     public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody ProjectRequestDTO project){
         return new ResponseEntity<>(
@@ -38,16 +55,6 @@ public class ProjectController {
             dtoConverter.toDTO(
                 projectService.getProjectById(id)
                 ),
-            HttpStatus.OK);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<ProjectResponseDTO>> getAll() {
-        return new ResponseEntity<>(
-            projectService.getAll()
-                        .stream()
-                        .map(dtoConverter::toDTO)
-                        .collect(Collectors.toList()),
             HttpStatus.OK);
     }
 

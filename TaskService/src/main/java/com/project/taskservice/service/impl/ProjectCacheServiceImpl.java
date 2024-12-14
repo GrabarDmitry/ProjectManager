@@ -2,6 +2,7 @@ package com.project.taskservice.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.project.taskservice.exception.ResourceException;
 import com.project.taskservice.model.Project;
 import com.project.taskservice.repository.ProjectRepositoryRedis;
 import com.project.taskservice.service.ProjectCacheService;
@@ -17,24 +18,23 @@ public class ProjectCacheServiceImpl implements ProjectCacheService{
     private final ProjectRepositoryRedis repositoryRedis;
 
     public Project getById(Long id) {
-		try {
-			return repositoryRedis.findById(id).orElse(null);
-		}catch (Exception ex){
-            log.error("Error with check is exist project in chche", ex);
-			return null;
-		}
+		log.info("Service method called to find Project form cache with id: {}", id);
+        return repositoryRedis
+        .findById(id)
+        .orElseThrow(
+            () -> {
+              log.warn("Project with Id: {} not found in cache", id);
+              throw new ResourceException("Project with Id: " + id + " not found in cache");
+            });
 	}
 	
 	public Project save(Project project) {
-        try {
-            return	repositoryRedis.save(project);
-        }catch (Exception ex){
-            log.error("Error with save project in cache", ex);
-        }
-        return null;
+        log.info("Save Project in cache", project);
+        return	repositoryRedis.save(project);
     }
 
     public void delete(Long id){
+        log.info("Delete Project form cache with id", id);
         repositoryRedis.deleteById(id);
     }
 

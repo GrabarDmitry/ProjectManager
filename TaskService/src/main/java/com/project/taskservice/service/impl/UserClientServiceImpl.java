@@ -2,8 +2,8 @@ package com.project.taskservice.service.impl;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -11,12 +11,13 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.project.taskservice.exception.ResourceException;
-import com.project.taskservice.service.ProjectClientService;
+import com.project.taskservice.model.User;
 import com.project.taskservice.service.UserClientsService;
 
 @Service
 public class UserClientServiceImpl implements UserClientsService{
     
+    private final String PATH_TO_USER_SERVICE_GET_BY_ID = "http://localhost:8083/api/v1/user/listUsers"; 
     private final RestTemplate restTemplate;
 
     public UserClientServiceImpl(RestTemplate restTemplate) {
@@ -24,24 +25,29 @@ public class UserClientServiceImpl implements UserClientsService{
     }
 
     @Override
-    public HttpStatusCode isExistUsersById(List<String> idList) {
+    public List<User> getListOfUser(List<String> idList) {
         try {
 
-            String url = UriComponentsBuilder.fromHttpUrl("http://localhost:8056/api/v1/user/isExistUsers")
+            String url = UriComponentsBuilder.fromHttpUrl(PATH_TO_USER_SERVICE_GET_BY_ID)
             .queryParam("userId", idList.toArray())
             .toUriString();
 
-            ResponseEntity<Void> response = restTemplate.getForEntity(url, Void.class);
+            ResponseEntity<List<User>> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<User>>() {}
+            );
 
-            return response.getStatusCode();
-
-        } catch (HttpClientErrorException.BadRequest e) {
-            throw new ResourceException("You try to add user that doesn't exist");
-        } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+            List<User> resultResponce = response.getBody();
+           
+            if (resultResponce.size() != idList.size()) {
                 throw new ResourceException("You try to user that doesn't exist");
             }
-            throw e;
+
+            return response.getBody();
+        }catch (HttpClientErrorException e) {
+            throw new ResourceException("You try to user that doesn't exist");
         }
     }
     

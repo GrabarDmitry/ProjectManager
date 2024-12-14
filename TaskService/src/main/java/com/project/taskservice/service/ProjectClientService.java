@@ -1,7 +1,9 @@
 package com.project.taskservice.service;
 
+import com.project.taskservice.model.Project;
+
 public interface ProjectClientService {
 
-   public boolean isExistById(Long projectId); 
+   public Project geProjectById(Long projectId); 
 
 }

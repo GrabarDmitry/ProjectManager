@@ -12,7 +12,10 @@ import com.example.UserService.model.User;
 import com.example.UserService.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -22,25 +25,25 @@ public class UserController {
     
     private final UserService service;
 
-     @GetMapping
-    public List<User> getAll(){
-        return service.getAll();
+    @GetMapping
+    public ResponseEntity<List<User>> getAll() {
+        return new ResponseEntity<>(
+            service.getAll(),
+            HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    User getProjectById(@PathVariable("userId") String userId){
-        return service.getByUserId(userId);
+    public ResponseEntity<User> getUserById(@PathVariable("userId") String userId){
+        return new ResponseEntity<>(
+        service.getByUserId(userId),
+            HttpStatus.OK);
     }
 
-    @GetMapping("/isExistUsers")
-    public ResponseEntity<Void> getUsersById(@RequestParam List<String> userId) {
-        boolean usersExist = service.areUsersExist(userId);
-    
-        if (usersExist) {
-            return ResponseEntity.status(HttpStatus.OK).build(); 
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    @GetMapping("/listUsers")
+    public ResponseEntity<List<User>> getUsersById(@RequestParam List<String> userId) {
+        return new ResponseEntity<>(
+            service.listUserById(userId),
+            HttpStatus.OK);
     }   
 
 }

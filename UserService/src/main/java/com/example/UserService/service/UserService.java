@@ -10,6 +10,6 @@ public interface UserService {
 
     public User getByUserId(String userId);
 
-    public boolean areUsersExist(List<String> userId);
+    public List<User> listUserById(List<String> userId);
     
 }

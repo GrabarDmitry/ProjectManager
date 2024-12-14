@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import com.example.UserService.model.User;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
@@ -20,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
     @Query(
         value = "SELECT * FROM USER_ENTITY WHERE ID=?1 ", 
         nativeQuery = true)
-    User findByStringId(String id);
+    Optional<User> findByStringId(String id);
 
     @Query(
         value = "SELECT * FROM USER_ENTITY WHERE ID IN :userIds", 

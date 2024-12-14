@@ -1,6 +1,7 @@
 package com.project.taskservice.service.impl;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,7 +13,9 @@ import com.project.taskservice.events.model.NotificationType;
 import com.project.taskservice.events.model.UserNotification;
 import com.project.taskservice.events.source.EventSender;
 import com.project.taskservice.exception.ResourceException;
+import com.project.taskservice.model.Project;
 import com.project.taskservice.model.Task;
+import com.project.taskservice.model.User;
 import com.project.taskservice.repository.TaskRepository;
 import com.project.taskservice.repository.specification.TaskSpecification;
 import com.project.taskservice.service.ProjectClientService;
@@ -35,40 +38,40 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public Task createTask(Task task) {
+        log.info("Service method called to create Task : {}", task);
+        
+        List<UserNotification> notifications = new ArrayList<>();
 
-        List<UserNotification> notifications = new LinkedList<>();
- 
-        notifications.add(new UserNotification("TEST@MAIL.COM", NotificationType.ADD));
-        notifications.add(new UserNotification("gleB@MAIL.COM", NotificationType.ADD));
+        Project project =  projectClientService.geProjectById(task.getProjectId());
+        List<User> listOfUser = userClientsService.getListOfUser(task.getUsers());
 
+        listOfUser.
+            stream().
+            forEach(
+                t -> notifications.add(new UserNotification(t.getEMAIL(), NotificationType.ADD))
+            );
+        
         eventSender.publishUserNotification(notifications);
 
-        boolean isExistProject =  projectClientService.isExistById(task.getProjectId());
-        HttpStatusCode isExistUsers = userClientsService.isExistUsersById(task.getUsers());
-
-
-
-
-        if (isExistProject && isExistUsers.value() == 200) {
-            return repository.save(task);
-        }
-
-        return null;
+        return repository.save(task);
     }
 
     @Override
     public Task getById(Long id) {
-        return repository.getById(id);
+        log.info("Service method called to find Task with id: {}", id);
+        return repository
+            .findById(id)
+            .orElseThrow(
+                () -> {
+                  log.warn("Task with Id: {} not found", id);
+                  throw new ResourceException("Task with Id: " + id + " not found");
+                });
     }
 
     @Override
-    public List<Task> getAllWithFilter(String status,String userId,Long projectId,String dateEnd,String title){
+    public List<Task> getAllWithFilter(String status,String userId,Long projectId,java.util.Date dateEnd,String title){
+        log.info("Service method called to find all tasks");
         return repository.findAll(TaskSpecification.withFilters(status, userId, projectId, dateEnd, title));
-    }
-
-    @Override
-    public List<Task> getAllByProjectId(Long projectId) {
-        return repository.getTasksByProjectId(projectId);
     }
 
     @Override
@@ -91,6 +94,7 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     public void delete(Long id){
+        log.info("Service method called to delete Task with id: {}", id);
         repository.deleteById(id);
     }
 

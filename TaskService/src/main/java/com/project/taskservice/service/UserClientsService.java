@@ -5,8 +5,10 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
+import com.project.taskservice.model.User;
+
 public interface UserClientsService {
 
-   public HttpStatusCode isExistUsersById(List<String> idList); 
+   public List<User> getListOfUser(List<String> idList); 
 
 }

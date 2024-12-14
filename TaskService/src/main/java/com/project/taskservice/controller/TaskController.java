@@ -1,5 +1,6 @@
 package com.project.taskservice.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +32,22 @@ public class TaskController {
     private final TaskDTOConverter converter;
     private final TaskService taskService;
 
+    @GetMapping
+    public ResponseEntity<List<TaskResponceDTO>> getAll(
+        @RequestParam(name = "status", required = false) String status,
+        @RequestParam(name = "userId", required = false) String userId,
+        @RequestParam(name = "projectId", required = false) Long projectId,
+        @RequestParam(name = "dateEnd", required = false) Date dateEnd,
+        @RequestParam(name = "title", required = false) String title
+    ) {
+        return new ResponseEntity<>(
+            taskService.getAllWithFilter(status, userId, projectId, dateEnd, title)
+                        .stream()
+                        .map(converter::toDTO)
+                        .collect(Collectors.toList()),
+            HttpStatus.OK);
+    }
+
     @PostMapping
     public ResponseEntity<TaskResponceDTO>  createTask(@Valid @RequestBody TaskRequestDTO task){
         return new ResponseEntity<>(
@@ -49,22 +66,6 @@ public class TaskController {
             HttpStatus.OK);
     }
 
-    @GetMapping
-    public ResponseEntity<List<TaskResponceDTO>> getAll(
-        @RequestParam(name = "status", required = false) String status,
-        @RequestParam(name = "userId", required = false) String userId,
-        @RequestParam(name = "projectId", required = false) Long projectId,
-        @RequestParam(name = "dateEnd", required = false) String dateEnd,
-        @RequestParam(name = "title", required = false) String title
-    ) {
-        return new ResponseEntity<>(
-            taskService.getAllWithFilter(status, userId, projectId, dateEnd, title)
-                        .stream()
-                        .map(converter::toDTO)
-                        .collect(Collectors.toList()),
-            HttpStatus.OK);
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponceDTO> updateTask(
         @PathVariable("id") Long id, @RequestBody @Valid TaskRequestDTO requestDTO) {
@@ -80,18 +81,6 @@ public class TaskController {
         @PathVariable("id") Long id) {
             taskService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-    @GetMapping("/byProjectId/{projectId}")
-    public ResponseEntity<List<TaskResponceDTO>> getAllTaskByProjectId(
-        @PathVariable("projectId") Long projectId
-    ) {
-        return new ResponseEntity<>(
-            taskService.getAllByProjectId(projectId)
-                        .stream()
-                        .map(converter::toDTO)
-                        .collect(Collectors.toList()),
-            HttpStatus.OK);
     }
 
 }

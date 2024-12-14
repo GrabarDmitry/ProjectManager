@@ -30,7 +30,7 @@ public class ProjectRequestDTO {
     private String description;
 
     @NotNull(message = "Manager of project should not be null!")
-    private Long managerId;
+    private String managerId;
 
     @NotNull(message = "Date start of project should not be null!")
     private Date dateStart;

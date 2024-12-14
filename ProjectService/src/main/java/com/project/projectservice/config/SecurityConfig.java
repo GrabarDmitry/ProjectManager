@@ -21,7 +21,8 @@ import org.springframework.http.HttpMethod;
 @RequiredArgsConstructor
 public class SecurityConfig{
 
-    public static final String MANAGER = "MANAGER";
+    private final String MANAGER_ROLE = "MANAGER";
+    private final String PATH_TO_PROJECT_CONTROLLER = "/api/v1/project";
 
     private final JwtConverter jwtConverter;
 
@@ -30,8 +31,13 @@ public class SecurityConfig{
         http.csrf().disable();
         
         http.authorizeHttpRequests().
-            requestMatchers(HttpMethod.GET, "/api/v1/project").
-            hasRole(MANAGER).anyRequest().authenticated();
+            requestMatchers(HttpMethod.POST, PATH_TO_PROJECT_CONTROLLER).
+            hasRole(MANAGER_ROLE).
+            requestMatchers(HttpMethod.DELETE, PATH_TO_PROJECT_CONTROLLER).
+            hasRole(MANAGER_ROLE).
+            requestMatchers(HttpMethod.PUT, PATH_TO_PROJECT_CONTROLLER).
+            hasRole(MANAGER_ROLE).
+            anyRequest().authenticated();
         
         http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtConverter);
 
