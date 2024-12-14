@@ -10,8 +10,10 @@ public interface TaskService {
 
     public Task getById(Long id); 
 
-    public List<Task> getAll();
+    public List<Task> getAllWithFilter(String status,String userId,Long projectId,String dateEnd,String title);
  
+    public List<Task> getAllByProjectId(Long projectId);
+
     public Task update(Task task);
 
     public void delete(Long id);

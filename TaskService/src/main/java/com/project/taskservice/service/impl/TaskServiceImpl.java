@@ -1,8 +1,10 @@
 package com.project.taskservice.service.impl;
 
+import java.sql.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import com.project.taskservice.events.source.EventSender;
 import com.project.taskservice.exception.ResourceException;
 import com.project.taskservice.model.Task;
 import com.project.taskservice.repository.TaskRepository;
+import com.project.taskservice.repository.specification.TaskSpecification;
 import com.project.taskservice.service.ProjectClientService;
 import com.project.taskservice.service.TaskService;
 import com.project.taskservice.service.UserClientsService;
@@ -59,8 +62,13 @@ public class TaskServiceImpl implements TaskService{
     }
 
     @Override
-    public List<Task> getAll() {
-        return repository.findAll();
+    public List<Task> getAllWithFilter(String status,String userId,Long projectId,String dateEnd,String title){
+        return repository.findAll(TaskSpecification.withFilters(status, userId, projectId, dateEnd, title));
+    }
+
+    @Override
+    public List<Task> getAllByProjectId(Long projectId) {
+        return repository.getTasksByProjectId(projectId);
     }
 
     @Override
@@ -85,4 +93,5 @@ public class TaskServiceImpl implements TaskService{
     public void delete(Long id){
         repository.deleteById(id);
     }
+
 }

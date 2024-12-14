@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.taskservice.controller.dto.converter.TaskDTOConverter;
@@ -49,9 +50,15 @@ public class TaskController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TaskResponceDTO>> getAll() {
+    public ResponseEntity<List<TaskResponceDTO>> getAll(
+        @RequestParam(name = "status", required = false) String status,
+        @RequestParam(name = "userId", required = false) String userId,
+        @RequestParam(name = "projectId", required = false) Long projectId,
+        @RequestParam(name = "dateEnd", required = false) String dateEnd,
+        @RequestParam(name = "title", required = false) String title
+    ) {
         return new ResponseEntity<>(
-            taskService.getAll()
+            taskService.getAllWithFilter(status, userId, projectId, dateEnd, title)
                         .stream()
                         .map(converter::toDTO)
                         .collect(Collectors.toList()),
@@ -73,6 +80,18 @@ public class TaskController {
         @PathVariable("id") Long id) {
             taskService.delete(id);
             return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/byProjectId/{projectId}")
+    public ResponseEntity<List<TaskResponceDTO>> getAllTaskByProjectId(
+        @PathVariable("projectId") Long projectId
+    ) {
+        return new ResponseEntity<>(
+            taskService.getAllByProjectId(projectId)
+                        .stream()
+                        .map(converter::toDTO)
+                        .collect(Collectors.toList()),
+            HttpStatus.OK);
     }
 
 }
