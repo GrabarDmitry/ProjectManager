@@ -42,12 +42,12 @@ public class UserClientServiceImpl implements UserClientsService{
             List<User> resultResponce = response.getBody();
            
             if (resultResponce.size() != idList.size()) {
-                throw new ResourceException("You try to user that doesn't exist");
+                throw new ResourceException("Some users dont exist!");
             }
 
             return response.getBody();
         }catch (HttpClientErrorException e) {
-            throw new ResourceException("You try to user that doesn't exist");
+            throw new ResourceException("Some users dont exist!");
         }
     }
     

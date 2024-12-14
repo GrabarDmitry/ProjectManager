@@ -47,7 +47,7 @@ public class ProjectClientServiceImpl implements ProjectClientService{
                 return projectRespone;
             }
         } catch (HttpClientErrorException e) {
-            throw new ResourceException("You try to add task to project that doesn't exist: projectId " + projectId);
+            throw new ResourceException("Project doesn't exist: projectId " + projectId);
         }
         return null;
     }

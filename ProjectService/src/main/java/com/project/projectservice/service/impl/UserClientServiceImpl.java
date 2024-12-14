@@ -41,7 +41,7 @@ public class UserClientServiceImpl implements UserClientsService{
                 return responseUser;
             }
         } catch (HttpClientErrorException e) {
-            throw new ResourceException("You try to add project with user that doesn't exist: user id " + userId);
+            throw new ResourceException("User doesn't exist: user id " + userId);
         }
         return null;
     }
